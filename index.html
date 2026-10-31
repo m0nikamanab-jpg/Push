@@ -23,6 +23,32 @@
 </div>
 
 <script>
+  (function () {
+  var ua = navigator.userAgent || '';
+  var isAndroid = /Android/i.test(ua);
+  var isIOS = /iPhone|iPad|iPod/i.test(ua);
+  var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|; wv\)|WebView|Version\/[\d.]+ Chrome\/[\d.]+ Mobile/i.test(ua);
+  var supported = ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+
+  if (isAndroid && (inApp || !supported)) {
+    var chromeUrl = 'intent://' + location.host + location.pathname + location.search +
+      '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
+      encodeURIComponent(location.href) + ';end';
+    window.location.replace(chromeUrl);
+    return;
+  }
+
+  if (!supported || (isIOS && inApp)) {
+    document.addEventListener('DOMContentLoaded', function () {
+      var box = document.querySelector('.box');
+      if (box) {
+        box.innerHTML = '<h3>⚠️ এই ব্রাউজারে Notification চলে না</h3>' +
+          '<p>উপরের ডানদিকের <b>⋯</b> মেনুতে চাপুন, তারপর <b>Open in Browser / Safari</b> বেছে নিন।</p>' +
+          '<p>iPhone হলে: Safari-তে খুলে Share → <b>Add to Home Screen</b> করুন, তারপর হোম স্ক্রিনের আইকন থেকে খুলে Allow চাপুন।</p>';
+      }
+    });
+  }
+})();
 var firebaseConfig = {
   apiKey: 'AIzaSyA3ny0kw_Ejyjbbw6Rm63RCoZmT5h0dpaU',
   authDomain: 'examwarriors-89447.firebaseapp.com',
