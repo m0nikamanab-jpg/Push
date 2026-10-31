@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Exam Warriors Notification</title>
+<script src='https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js'></script>
+<script src='https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js'></script>
+<style>body{font-family:Arial;text-align:center;padding:50px}button{padding:15px 30px;font-size:18px;background:#e53935;color:#fff;border:none;border-radius:8px;cursor:pointer}#status{margin-top:20px;color:green}</style>
+</head>
+<body>
+<h2>🔔 Exam Warriors Notification On korun</h2>
+<p>Allow korle apni notun Mock Test er update paben</p>
+<button id='btn'>Allow Notification</button>
+<div id='status'></div>
+<script>
+var firebaseConfig={apiKey:'AIzaSyA3ny0kw_Ejyjbbw6Rm63RCoZmT5h0dpaU',authDomain:'examwarriors-89447.firebaseapp.com',projectId:'examwarriors-89447',storageBucket:'examwarriors-89447.firebasestorage.app',messagingSenderId:'759292058436',appId:'1:759292058436:web:4b09da2acedbe3779d5511'};
+var VAPID_KEY='[STRIPPED 87 bytes]';
+var SHEET_API_URL='https://script.google.com/macros/s/AKfycbwzA1HSoCMMpwjz7rgQhoutJ_hG0SYNNlEp-cb1IvHXgzCQmuDVNIaZySyMXz44B36j/exec';
+firebase.initializeApp(firebaseConfig);
+var messaging=firebase.messaging();
+document.getElementById('btn').onclick=function(){
+  Notification.requestPermission().then(function(p){
+    if(p==='granted'){
+      document.getElementById('status').innerText='Permission granted, token anchi...';
+      messaging.getToken({vapidKey:VAPID_KEY}).then(function(token){
+        if(token){
+          document.getElementById('status').innerText='Subscribed! Token Sheet e joma hocche...';
+          // 2 bhabe pathabo
+          fetch(SHEET_API_URL+'?token='+token,{method:'GET',mode:'no-cors'});
+          var img=new Image();
+          img.src=SHEET_API_URL+'?token='+encodeURIComponent(token);
+          setTimeout(function(){document.getElementById('status').innerText='Done! Ebar Blogger e fire jan.';},2000);
+        }
+      }).catch(function(e){document.getElementById('status').innerText='Error: '+e.message;});
+    } else {
+      document.getElementById('status').innerText='Apni Block korechen, Allow korun.';
+    }
+  });
+};
+</script>
+</body>
+</html>
