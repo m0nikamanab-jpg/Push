@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Exam Warriors Notification</title>
+<title>Exam Warriors Notifications</title>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"></script>
 <style>
@@ -15,40 +15,41 @@
 </head>
 <body>
 <div class="box">
-  <h2>🔔 Exam Warriors Notification On korun</h2>
-  <p>Allow korle notun Mock Test er update paben</p>
-  <button id="btn">Allow Notification</button>
+  <h2>🔔 Turn On Exam Warriors Notifications</h2>
+  <p>Allow notifications to get instant updates about new Mock Tests.</p>
+  <button id="btn">Allow Notifications</button>
   <div id="status"></div>
-  <p><a href="https://www.examwarriors.online/">← Site e fire jan</a></p>
+  <p><a href="https://www.examwarriors.online/">← Back to website</a></p>
 </div>
 
 <script>
-  (function () {
+(function () {
   var ua = navigator.userAgent || '';
   var isAndroid = /Android/i.test(ua);
   var isIOS = /iPhone|iPad|iPod/i.test(ua);
-  var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|; wv\)|WebView|Version\/[\d.]+ Chrome\/[\d.]+ Mobile/i.test(ua);
+  var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|; wv\)|WebView/i.test(ua);
   var supported = ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
 
   if (isAndroid && (inApp || !supported)) {
-    var chromeUrl = 'intent://' + location.host + location.pathname + location.search +
+    window.location.replace('intent://' + location.host + location.pathname + location.search +
       '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
-      encodeURIComponent(location.href) + ';end';
-    window.location.replace(chromeUrl);
+      encodeURIComponent(location.href) + ';end');
     return;
   }
-
   if (!supported || (isIOS && inApp)) {
     document.addEventListener('DOMContentLoaded', function () {
       var box = document.querySelector('.box');
       if (box) {
-        box.innerHTML = '<h3>⚠️ এই ব্রাউজারে Notification চলে না</h3>' +
-          '<p>উপরের ডানদিকের <b>⋯</b> মেনুতে চাপুন, তারপর <b>Open in Browser / Safari</b> বেছে নিন।</p>' +
-          '<p>iPhone হলে: Safari-তে খুলে Share → <b>Add to Home Screen</b> করুন, তারপর হোম স্ক্রিনের আইকন থেকে খুলে Allow চাপুন।</p>';
+        box.innerHTML = '<h3>⚠️ Notifications are not supported in this browser</h3>' +
+          '<p>Tap the <b>⋯</b> menu at the top right and choose <b>Open in Browser / Safari</b>.</p>' +
+          '<p>On iPhone: open in Safari, tap Share → <b>Add to Home Screen</b>, then open the site from your home screen and tap Allow.</p>';
       }
     });
   }
 })();
+</script>
+
+<script>
 var firebaseConfig = {
   apiKey: 'AIzaSyA3ny0kw_Ejyjbbw6Rm63RCoZmT5h0dpaU',
   authDomain: 'examwarriors-89447.firebaseapp.com',
@@ -61,24 +62,24 @@ var VAPID_KEY = 'BNySdfk5WiCEMThnglTFA_4u6XFymiGIvvOIVvWRMEhJNxika8Hnl8mlQSSeBbf
 var SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzP42ecIh6I_PcoRIklv0hZFBI64l-l8YxHGCXLXa_aqzwqMhD8vopTSewDbRjD5V-Wag/exec';
 
 var statusEl = document.getElementById('status');
-firebase.initializeApp(firebaseConfig);
-var messaging = firebase.messaging();
+if ('serviceWorker' in navigator && 'Notification' in window && 'PushManager' in window) {
+  firebase.initializeApp(firebaseConfig);
+  var messaging = firebase.messaging();
 
-if ('serviceWorker' in navigator && 'Notification' in window) {
   navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (reg) {
     document.getElementById('btn').onclick = function () {
       Notification.requestPermission().then(function (p) {
         if (p !== 'granted') {
           statusEl.style.color = 'red';
-          statusEl.innerText = 'Block korechen, browser setting theke Allow korun.';
+          statusEl.innerText = 'Notifications are blocked. Please allow them in your browser settings.';
           return;
         }
         statusEl.style.color = 'green';
         statusEl.innerText = 'Permission granted...';
         messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg }).then(function (token) {
-          if (!token) { statusEl.innerText = 'Token pawa jayni.'; return; }
+          if (!token) { statusEl.innerText = 'Could not get a token. Please try again.'; return; }
           fetch(SHEET_API_URL + '?token=' + encodeURIComponent(token), { method: 'GET', mode: 'no-cors' });
-          statusEl.innerText = '✅ Subscribed! Dhonnobad.';
+          statusEl.innerText = '✅ Subscribed! Thank you.';
         }).catch(function (e) {
           statusEl.style.color = 'red';
           statusEl.innerText = 'Error: ' + e.message;
@@ -90,9 +91,6 @@ if ('serviceWorker' in navigator && 'Notification' in window) {
     statusEl.style.color = 'red';
     statusEl.innerText = 'Service worker error: ' + e.message;
   });
-} else {
-  statusEl.style.color = 'red';
-  statusEl.innerText = 'Ei browser e notification support nei.';
 }
 </script>
 </body>
