@@ -10,4 +10,20 @@ firebase.initializeApp({
   appId: '1:759292058436:web:4b09da2acedbe3779d5511'
 });
 
-firebase.messaging();
+const messaging = firebase.messaging();
+
+// data-only মেসেজ: নোটিফিকেশন আমরা নিজে দেখাব, তাই ক্লিক নিয়ন্ত্রণ আমাদের হাতে
+messaging.onBackgroundMessage(function (payload) {
+  var d = payload.data || {};
+  return self.registration.showNotification(d.title || 'Exam Warriors', {
+    body: d.body || '',
+    icon: 'https://www.examwarriors.online/favicon.ico',
+    data: { link: d.link || 'https://www.examwarriors.online/' }
+  });
+});
+
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  var link = (event.notification.data && event.notification.data.link) || 'https://www.examwarriors.online/';
+  event.waitUntil(clients.openWindow(link));
+});
