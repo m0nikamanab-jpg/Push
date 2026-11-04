@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Join For Update</title>
+<title>Join For Updates</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
   *{box-sizing:border-box}
@@ -28,14 +28,14 @@
 </head>
 <body>
 <div class="card">
-  <h2>🔔 Update pete join korun</h2>
-  <p class="sub">Prothome notification allow korun, tarpor baki group-e join korun.</p>
+  <h2>🔔 Join For Updates</h2>
+  <p class="sub">First allow notifications, then join our other channels.</p>
 
   <button id="allowBtn" class="btn push"><i class="fas fa-bell"></i> Allow Notifications</button>
   <p id="status"></p>
 
   <hr>
-  <div class="label">Baki social-e join korun</div>
+  <div class="label">Join us on other platforms</div>
 
   <a class="btn wa" target="_blank" rel="noopener"
      href="https://chat.whatsapp.com/GLFRW19rq5JIyxIPOje45M">
@@ -54,7 +54,7 @@
 </div>
 
 <script>
-  // ⚠️ Nijer blog-er link boshan
+  // ⚠️ Put your real blog link here
   var BLOG_URL = 'https://YOURBLOG.blogspot.com';
 
   var allowBtn = document.getElementById('allowBtn');
@@ -63,20 +63,20 @@
   document.getElementById('backBtn').href = BLOG_URL;
 
   function showGranted(){
-    allowBtn.innerHTML = '<i class="fas fa-check"></i> Notification On Ache';
+    allowBtn.innerHTML = '<i class="fas fa-check"></i> Notifications Enabled';
     allowBtn.style.background = '#2e7d32';
     statusEl.style.color = '#2e7d32';
-    statusEl.textContent = '✅ Done! Ekhon niche theke baki gulo join korun.';
+    statusEl.textContent = '✅ Done! Now join the other channels below.';
   }
 
   if (!('Notification' in window)) {
     statusEl.style.color = '#c62828';
-    statusEl.textContent = 'Ei browser-e notification support nei. Chrome-e khulun.';
+    statusEl.textContent = 'Notifications are not supported in this browser. Please open this page in Chrome.';
   } else if (Notification.permission === 'granted') {
     showGranted();
   } else if (Notification.permission === 'denied') {
     statusEl.style.color = '#c62828';
-    statusEl.textContent = 'Notification block kora ache. Browser-er site settings theke Allow korun.';
+    statusEl.textContent = 'Notifications are blocked. Please allow them in your browser\'s site settings.';
   }
 
   allowBtn.addEventListener('click', async function(){
@@ -84,10 +84,10 @@
     var result = await Notification.requestPermission();
     if (result === 'granted') {
       showGranted();
-      // 👉 Apnar push service-er subscribe code ekhane boshbe
+      // 👉 Your push service subscribe code goes here
     } else {
       statusEl.style.color = '#c62828';
-      statusEl.textContent = 'Allow kora hoyni. Abar try korun.';
+      statusEl.textContent = 'Permission was not granted. Please try again.';
     }
   });
 </script>
