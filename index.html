@@ -1,3 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join For Updates</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+       background:#f1f3f6;font-family:'Segoe UI',Tahoma,sans-serif;padding:16px}
+  .card{width:100%;max-width:380px;background:#fff;border-radius:16px;padding:24px;
+        box-shadow:0 8px 30px rgba(0,0,0,.12);text-align:center}
+  h2{margin:0 0 6px;font-size:20px}
+  p.sub{margin:0 0 18px;color:#666;font-size:14px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+       padding:13px;margin-top:12px;border:0;border-radius:10px;color:#fff;
+       font-size:15px;font-weight:bold;text-decoration:none;cursor:pointer}
+  .push{background:#e53935}
+  .wa{background:#25D366}
+  .tg{background:#0088cc}
+  .fb{background:#1877F2}
+  .back{background:#333}
+  #status{font-size:13px;margin:10px 0 0;min-height:18px}
+  hr{border:0;border-top:1px solid #eee;margin:20px 0 6px}
+  .label{font-size:13px;color:#888}
+</style>
+</head>
+<body>
+<div class="card">
+  <h2>🔔 Join For Updates</h2>
+  <p class="sub">Get our posts fast! Tap Allow, then turn on notifications from the links below.</p>
+
+  <button id="allowBtn" class="btn push"><i class="fas fa-bell"></i> Allow Notifications</button>
+  <p id="status"></p>
+
+  <div id="inappBox" style="display:none;margin-top:12px;padding:12px;background:#fff3cd;border-radius:10px;font-size:13px;color:#664d03">
+    This browser may not support notifications. Open this page in Chrome for the best result.
+    <a id="chromeBtn" class="btn push" href="#"><i class="fas fa-globe"></i> Open in Chrome</a>
+  </div>
+
+  <hr>
+  <div class="label">Join us on other platforms</div>
+
+  <a class="btn wa" target="_blank" rel="noopener"
+     href="https://chat.whatsapp.com/GLFRW19rq5JIyxIPOje45M">
+     <i class="fab fa-whatsapp"></i> Join WhatsApp</a>
+
+  <a class="btn tg" target="_blank" rel="noopener"
+     href="https://t.me/+8d7TIFqC8Vc0NTk9">
+     <i class="fab fa-telegram-plane"></i> Join Telegram</a>
+
+  <a class="btn fb" target="_blank" rel="noopener"
+     href="https://www.facebook.com/groups/1349780560477734">
+     <i class="fab fa-facebook-f"></i> Join Facebook</a>
+
+  <a id="backBtn" class="btn back" href="#">
+     <i class="fas fa-arrow-left"></i> Back to Website</a>
+</div>
+
 <script>
   var BLOG_URL = 'https://www.examwarriors.online/';
 
@@ -5,6 +65,29 @@
   var statusEl = document.getElementById('status');
 
   document.getElementById('backBtn').href = BLOG_URL;
+
+  // In-app browser / unsupported browser check
+  (function () {
+    var ua = navigator.userAgent || '';
+    var isAndroid = /Android/i.test(ua);
+    var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|; wv\)|WebView/i.test(ua);
+    var supported = ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+
+    if (!supported || inApp) {
+      document.getElementById('inappBox').style.display = 'block';
+      var chromeBtn = document.getElementById('chromeBtn');
+      if (isAndroid) {
+        chromeBtn.href = 'intent://' + location.host + location.pathname +
+          '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
+          encodeURIComponent(location.href) + ';end';
+      } else {
+        chromeBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          alert('Tap the ⋯ menu and choose "Open in Browser / Safari".');
+        });
+      }
+    }
+  })();
 
   function showGranted(){
     allowBtn.innerHTML = '<i class="fas fa-check"></i> Notifications Enabled';
@@ -35,3 +118,5 @@
     }
   });
 </script>
+</body>
+</html>
