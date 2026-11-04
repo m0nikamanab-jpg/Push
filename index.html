@@ -35,7 +35,7 @@
   <p id="status"></p>
 
   <div id="inappBox" style="display:none;margin-top:12px;padding:12px;background:#fff3cd;border-radius:10px;font-size:13px;color:#664d03">
-    This browser may not support notifications. Open this page in Chrome for the best result.
+    <span id="inappMsg">Opening in Chrome...</span>
     <a id="chromeBtn" class="btn push" href="#"><i class="fas fa-globe"></i> Open in Chrome</a>
   </div>
 
@@ -66,29 +66,56 @@
 
   document.getElementById('backBtn').href = BLOG_URL;
 
-  // In-app browser / unsupported browser check
+  // ===== Auto redirect to Chrome for unsupported / in-app browsers =====
   (function () {
     var ua = navigator.userAgent || '';
     var isAndroid = /Android/i.test(ua);
+    var isIOS = /iPhone|iPad|iPod/i.test(ua);
     var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|; wv\)|WebView/i.test(ua);
     var supported = ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
 
-    if (!supported || inApp) {
-      document.getElementById('inappBox').style.display = 'block';
-      var chromeBtn = document.getElementById('chromeBtn');
-      if (isAndroid) {
-        chromeBtn.href = 'intent://' + location.host + location.pathname +
-          '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
-          encodeURIComponent(location.href) + ';end';
-      } else {
-        chromeBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          alert('Tap the ⋯ menu and choose "Open in Browser / Safari".');
-        });
-      }
+    if (supported && !inApp) return;
+
+    var box = document.getElementById('inappBox');
+    var chromeBtn = document.getElementById('chromeBtn');
+    var msg = document.getElementById('inappMsg');
+    box.style.display = 'block';
+
+    var chromeUrl = '';
+    if (isAndroid) {
+      chromeUrl = 'intent://' + location.host + location.pathname + location.search +
+        '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
+        encodeURIComponent(location.href) + ';end';
+    } else if (isIOS) {
+      chromeUrl = 'googlechromes://' + location.host + location.pathname + location.search;
+    }
+
+    if (!chromeUrl) {
+      msg.textContent = 'This browser does not support notifications. Please open this page in Chrome.';
+      chromeBtn.style.display = 'none';
+      return;
+    }
+
+    chromeBtn.href = chromeUrl;
+
+    // Redirect only once, to avoid a loop
+    var tried = false;
+    try { tried = sessionStorage.getItem('chromeRedirectTried') === '1'; } catch (e) {}
+
+    if (!tried) {
+      try { sessionStorage.setItem('chromeRedirectTried', '1'); } catch (e) {}
+      msg.textContent = 'Opening in Chrome...';
+      setTimeout(function () { window.location.href = chromeUrl; }, 300);
+      // If redirect did not work, show manual message
+      setTimeout(function () {
+        msg.textContent = 'Could not open Chrome automatically. Tap the button below, or use the ⋯ menu and choose "Open in Browser".';
+      }, 2500);
+    } else {
+      msg.textContent = 'Please open this page in Chrome to turn on notifications.';
     }
   })();
 
+  // ===== Notification permission =====
   function showGranted(){
     allowBtn.innerHTML = '<i class="fas fa-check"></i> Notifications Enabled';
     allowBtn.style.background = '#2e7d32';
@@ -98,7 +125,7 @@
 
   if (!('Notification' in window)) {
     statusEl.style.color = '#c62828';
-    statusEl.textContent = 'Notifications are not supported in this browser. Please open this page in Chrome.';
+    statusEl.textContent = 'Notifications are not supported in this browser.';
   } else if (Notification.permission === 'granted') {
     showGranted();
   } else if (Notification.permission === 'denied') {
