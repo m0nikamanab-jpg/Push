@@ -1,97 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Exam Warriors Notifications</title>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join For Update</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  body{font-family:Arial,sans-serif;text-align:center;padding:50px 20px;background:#f5f5f5}
-  .box{max-width:420px;margin:auto;background:#fff;padding:30px;border-radius:12px;box-shadow:0 2px 10px #0002}
-  button{padding:15px 30px;font-size:18px;background:#e53935;color:#fff;border:none;border-radius:8px;cursor:pointer}
-  #status{margin-top:20px;color:green;font-size:16px}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+       background:#f1f3f6;font-family:'Segoe UI',Tahoma,sans-serif;padding:16px}
+  .card{width:100%;max-width:380px;background:#fff;border-radius:16px;padding:24px;
+        box-shadow:0 8px 30px rgba(0,0,0,.12);text-align:center}
+  h2{margin:0 0 6px;font-size:20px}
+  p.sub{margin:0 0 18px;color:#666;font-size:14px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+       padding:13px;margin-top:12px;border:0;border-radius:10px;color:#fff;
+       font-size:15px;font-weight:bold;text-decoration:none;cursor:pointer}
+  .push{background:#e53935}
+  .wa{background:#25D366}
+  .tg{background:#0088cc}
+  .fb{background:#1877F2}
+  .back{background:#333}
+  #status{font-size:13px;margin:10px 0 0;min-height:18px}
+  hr{border:0;border-top:1px solid #eee;margin:20px 0 6px}
+  .label{font-size:13px;color:#888}
 </style>
 </head>
 <body>
-<div class="box">
-  <h2>🔔 Turn On Exam Warriors Notifications</h2>
-  <p>Allow notifications to get instant updates about new Mock Tests.</p>
-  <button id="btn">Allow Notifications</button>
-  <div id="status"></div>
-  <p><a href="https://www.examwarriors.online/">← Back to website</a></p>
+<div class="card">
+  <h2>🔔 Update pete join korun</h2>
+  <p class="sub">Prothome notification allow korun, tarpor baki group-e join korun.</p>
+
+  <button id="allowBtn" class="btn push"><i class="fas fa-bell"></i> Allow Notifications</button>
+  <p id="status"></p>
+
+  <hr>
+  <div class="label">Baki social-e join korun</div>
+
+  <a class="btn wa" target="_blank" rel="noopener"
+     href="https://chat.whatsapp.com/GLFRW19rq5JIyxIPOje45M">
+     <i class="fab fa-whatsapp"></i> Join WhatsApp</a>
+
+  <a class="btn tg" target="_blank" rel="noopener"
+     href="https://t.me/+8d7TIFqC8Vc0NTk9">
+     <i class="fab fa-telegram-plane"></i> Join Telegram</a>
+
+  <a class="btn fb" target="_blank" rel="noopener"
+     href="https://www.facebook.com/groups/1349780560477734">
+     <i class="fab fa-facebook-f"></i> Join Facebook</a>
+
+  <a id="backBtn" class="btn back" href="#">
+     <i class="fas fa-arrow-left"></i> Back to Website</a>
 </div>
 
 <script>
-(function () {
-  var ua = navigator.userAgent || '';
-  var isAndroid = /Android/i.test(ua);
-  var isIOS = /iPhone|iPad|iPod/i.test(ua);
-  var inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|Snapchat|; wv\)|WebView/i.test(ua);
-  var supported = ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window);
+  // ⚠️ Nijer blog-er link boshan
+  var BLOG_URL = 'https://YOURBLOG.blogspot.com';
 
-  if (isAndroid && (inApp || !supported)) {
-    window.location.replace('intent://' + location.host + location.pathname + location.search +
-      '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' +
-      encodeURIComponent(location.href) + ';end');
-    return;
+  var allowBtn = document.getElementById('allowBtn');
+  var statusEl = document.getElementById('status');
+
+  document.getElementById('backBtn').href = BLOG_URL;
+
+  function showGranted(){
+    allowBtn.innerHTML = '<i class="fas fa-check"></i> Notification On Ache';
+    allowBtn.style.background = '#2e7d32';
+    statusEl.style.color = '#2e7d32';
+    statusEl.textContent = '✅ Done! Ekhon niche theke baki gulo join korun.';
   }
-  if (!supported || (isIOS && inApp)) {
-    document.addEventListener('DOMContentLoaded', function () {
-      var box = document.querySelector('.box');
-      if (box) {
-        box.innerHTML = '<h3>⚠️ Notifications are not supported in this browser</h3>' +
-          '<p>Tap the <b>⋯</b> menu at the top right and choose <b>Open in Browser / Safari</b>.</p>' +
-          '<p>On iPhone: open in Safari, tap Share → <b>Add to Home Screen</b>, then open the site from your home screen and tap Allow.</p>';
-      }
-    });
+
+  if (!('Notification' in window)) {
+    statusEl.style.color = '#c62828';
+    statusEl.textContent = 'Ei browser-e notification support nei. Chrome-e khulun.';
+  } else if (Notification.permission === 'granted') {
+    showGranted();
+  } else if (Notification.permission === 'denied') {
+    statusEl.style.color = '#c62828';
+    statusEl.textContent = 'Notification block kora ache. Browser-er site settings theke Allow korun.';
   }
-})();
-</script>
 
-<script>
-var firebaseConfig = {
-  apiKey: 'AIzaSyA3ny0kw_Ejyjbbw6Rm63RCoZmT5h0dpaU',
-  authDomain: 'examwarriors-89447.firebaseapp.com',
-  projectId: 'examwarriors-89447',
-  storageBucket: 'examwarriors-89447.firebasestorage.app',
-  messagingSenderId: '759292058436',
-  appId: '1:759292058436:web:4b09da2acedbe3779d5511'
-};
-var VAPID_KEY = 'BNySdfk5WiCEMThnglTFA_4u6XFymiGIvvOIVvWRMEhJNxika8Hnl8mlQSSeBbflW_lPjAzbDf3tNm5AB1BmDqE'.trim();
-var SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzP42ecIh6I_PcoRIklv0hZFBI64l-l8YxHGCXLXa_aqzwqMhD8vopTSewDbRjD5V-Wag/exec';
-
-var statusEl = document.getElementById('status');
-if ('serviceWorker' in navigator && 'Notification' in window && 'PushManager' in window) {
-  firebase.initializeApp(firebaseConfig);
-  var messaging = firebase.messaging();
-
-  navigator.serviceWorker.register('firebase-messaging-sw.js').then(function (reg) {
-    document.getElementById('btn').onclick = function () {
-      Notification.requestPermission().then(function (p) {
-        if (p !== 'granted') {
-          statusEl.style.color = 'red';
-          statusEl.innerText = 'Notifications are blocked. Please allow them in your browser settings.';
-          return;
-        }
-        statusEl.style.color = 'green';
-        statusEl.innerText = 'Permission granted...';
-        messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg }).then(function (token) {
-          if (!token) { statusEl.innerText = 'Could not get a token. Please try again.'; return; }
-          fetch(SHEET_API_URL + '?token=' + encodeURIComponent(token), { method: 'GET', mode: 'no-cors' });
-          statusEl.innerText = '✅ Subscribed! Thank you.';
-        }).catch(function (e) {
-          statusEl.style.color = 'red';
-          statusEl.innerText = 'Error: ' + e.message;
-          console.log(e);
-        });
-      });
-    };
-  }).catch(function (e) {
-    statusEl.style.color = 'red';
-    statusEl.innerText = 'Service worker error: ' + e.message;
+  allowBtn.addEventListener('click', async function(){
+    if (!('Notification' in window)) return;
+    var result = await Notification.requestPermission();
+    if (result === 'granted') {
+      showGranted();
+      // 👉 Apnar push service-er subscribe code ekhane boshbe
+    } else {
+      statusEl.style.color = '#c62828';
+      statusEl.textContent = 'Allow kora hoyni. Abar try korun.';
+    }
   });
-}
 </script>
 </body>
 </html>
